@@ -5,28 +5,30 @@ import com.nextack.tenorsearcher.rest.responses.SearchResult
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface TenorRestService {
 
     @GET("anonid")
-    fun getAnon(@Header("key") apiKey: String) : Call<AnonInfo>
+    fun getAnon(@Query("key") apiKey: String) : Call<AnonInfo>
 
     @GET("search")
-    fun search(@Header("key") apiKey: String,
-               @Header("anon_id") anonId: String,
-               @Header("q") quary: String,
-               @Header("locale") locale: String,
-               @Header("limit") limit: Int) : Call<List<SearchResult>>
+    fun search(@Query("key") apiKey: String,
+               @Query("anon_id") anonId: String,
+               @Query("q") quary: String,
+               @Query("locale") locale: String,
+               @Query("limit") limit: Int) : Call<SearchResult>
 
     @GET("trending")
-    fun trending(@Header("key") apiKey: String,
-                 @Header("anon_id") anonId: String,
-                 @Header("locale") locale: String,
-                 @Header("limit") limit: Int,
-                 @Header("media_filter") mediaFilter: String,
-                 @Header("ar_range") range: String,
-                 @Header("contentfilter") contentFilter: String,
-                 @Header("pos") positionOffset: String) : Call<List<SearchResult>>
+    fun trending(@Query("key") apiKey: String,
+                 @Query("anon_id") anonId: String,
+                 @Query("locale") locale: String,
+                 @Query("limit") limit: Int,
+                 @Query("media_filter") mediaFilter: String,
+                 @Query("ar_range") range: String,
+                 @Query("contentfilter") contentFilter: String,
+                 @Query("pos") positionOffset: String) : Call<SearchResult>
 
 
 }

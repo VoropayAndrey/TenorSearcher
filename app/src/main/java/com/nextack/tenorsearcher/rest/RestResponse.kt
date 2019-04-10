@@ -28,4 +28,11 @@ class RestResponse<T> {
     constructor(body: T) {
         this.body = body
     }
+
+    fun isSuccessful() : Boolean {
+        if(statusCode in 200..299) {
+            return true
+        }
+        return false
+    }
 }

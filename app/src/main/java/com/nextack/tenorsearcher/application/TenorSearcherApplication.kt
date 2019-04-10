@@ -5,20 +5,18 @@ import com.nextack.tenorsearcher.di.ApplicationComponent
 import com.nextack.tenorsearcher.di.ContextModule
 import com.nextack.tenorsearcher.di.DaggerApplicationComponent
 
-class TenorSearcherApplication : Application() {
+open class TenorSearcherApplication : Application() {
 
-    companion object {
-        private lateinit var component: ApplicationComponent
-        fun getApplicationComponent() : ApplicationComponent = component
-    }
+    private lateinit var component: ApplicationComponent
 
     override fun onCreate() {
         super.onCreate()
         component = initApplicationComponent()
-
     }
 
     private fun initApplicationComponent() : ApplicationComponent {
         return DaggerApplicationComponent.builder().contextModule(ContextModule(this.applicationContext)).build()
     }
+
+    fun getApplicationComponent() : ApplicationComponent = component
 }

@@ -19,19 +19,19 @@ class Repository(private val restService: TenorRestService,
                  private val savedData: SavedData) {
 
 
-    fun search(query: String) : LiveData<RestResponse<List<SearchResult>>> {
-        val liveData: MutableLiveData<RestResponse<List<SearchResult>>> = MutableLiveData()
+    fun search(query: String) : LiveData<RestResponse<SearchResult>> {
+        val liveData: MutableLiveData<RestResponse<SearchResult>> = MutableLiveData()
 
         var anonId = savedData.getAnonId()
         if(anonId == null) {
 
         } else {
-            restService.search(RestConstants.TENOR_API_KEY, anonId, query, "ua_UA", 10).enqueue(object : retrofit2.Callback<List<SearchResult>> {
-                override fun onFailure(call: Call<List<SearchResult>>, t: Throwable) {
+            restService.search(RestConstants.TENOR_API_KEY, anonId, query, "ua_UA", 10).enqueue(object : retrofit2.Callback<SearchResult> {
+                override fun onFailure(call: Call<SearchResult>, t: Throwable) {
                     liveData.value = RestResponse(t)
                 }
 
-                override fun onResponse(call: Call<List<SearchResult>>, response: Response<List<SearchResult>>) {
+                override fun onResponse(call: Call<SearchResult>, response: Response<SearchResult>) {
                     liveData.value = RestResponse(response)
                 }
             })
@@ -39,14 +39,27 @@ class Repository(private val restService: TenorRestService,
         return liveData
     }
 
-    fun trending() : LiveData<RestResponse<List<SearchResult>>> {
-        val liveData: MutableLiveData<RestResponse<List<SearchResult>>> = MutableLiveData()
+    fun trending() : LiveData<RestResponse<SearchResult>> {
+        val liveData: MutableLiveData<RestResponse<SearchResult>> = MutableLiveData()
+
+        var anonId = savedData.getAnonId()
+        if(anonId == null) {
+
+        } else {
+            restService.trending(RestConstants.TENOR_API_KEY, anonId, "ua_UA", 10, "basic", "all", "off", "").enqueue(object : retrofit2.Callback<SearchResult> {
+                override fun onFailure(call: Call<SearchResult>, t: Throwable) {
+                    liveData.value = RestResponse(t)
+                }
+
+                override fun onResponse(call: Call<SearchResult>, response: Response<SearchResult>) {
+                    liveData.value = RestResponse(response)
+                }
+            })
+        }
         return liveData
     }
 
     fun getAnonId() : LiveData<RestResponse<AnonInfo>> {
-
-
         val liveData: MutableLiveData<RestResponse<AnonInfo>> = MutableLiveData()
         var anonId = savedData.getAnonId()
         if(anonId == null) {
@@ -57,6 +70,7 @@ class Repository(private val restService: TenorRestService,
 
                 override fun onResponse(call: Call<AnonInfo>, response: Response<AnonInfo>) {
                     liveData.value = RestResponse(response)
+                    savedData.setAnonId(response.body()?.anonId)
                 }
             })
         } else {

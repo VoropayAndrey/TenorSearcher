@@ -5,7 +5,7 @@ import com.nextack.tenorsearcher.constants.DataConstants
 
 class SavedData(private val sharedPreferences: SharedPreferences) {
 
-    fun setAnonId(anonId: String) {
+    fun setAnonId(anonId: String?) {
         sharedPreferences.edit().putString(DataConstants.ANON_ID, anonId).commit()
     }
 
