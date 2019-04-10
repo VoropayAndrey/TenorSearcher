@@ -7,10 +7,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.lifecycle.Observer
+import com.bumptech.glide.Glide
 import com.nextack.tenorsearcher.R
 import com.nextack.tenorsearcher.application.TenorSearcherApplication
 import com.nextack.tenorsearcher.repository.Repository
 import com.nextack.tenorsearcher.view.OnFragmentInteractionListener
+import kotlinx.android.synthetic.main.fragment_trending.*
 import javax.inject.Inject
 
 
@@ -77,7 +81,11 @@ class TrendingFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         //repository.getAnonId()
-        repository.trending()
+        repository.trending().observe(this, Observer {
+            var url = it.body?.results?.get(0)?.media?.get(0)?.get("gif")?.get("url").toString()
+            Glide.with(context!!).load(url).into(gifExample)
+
+        })
         //repository.search("cats")
     }
 

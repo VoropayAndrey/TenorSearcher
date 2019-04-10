@@ -21,7 +21,7 @@ open class TenorGif {
     // [ { GIF_FORMAT : MEDIA_OBJECT } ]
     // An array of dictionaries with GIF_FORMAT as the key and MEDIA_OBJECT as the value
     @SerializedName("media")
-    var media: List<Map<String, String>> = ArrayList<HashMap<String, String>>()
+    var media: List<Map<String, Map<String, String>>> = ArrayList<HashMap<String, HashMap<String, String>>>()
 
     // An array of tags for the post
     @SerializedName("tags")
