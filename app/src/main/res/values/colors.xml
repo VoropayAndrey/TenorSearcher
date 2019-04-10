@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimary">#7DD931</color>
+    <color name="colorPrimaryDark">#5CB810</color>
+    <color name="colorAccent">#E397E3</color>
+
+    <color name="searchBackground">#80FFFFFF</color>
+    <color name="searchBorder">#870C87</color>
+
+    <color name="trendingBackground">#80FFFFFF</color>
+
+    <color name="gridItemBackground">#FFFFFF</color>
+    <color name="gridItemBorder">#870C87</color>
+
+
 </resources>

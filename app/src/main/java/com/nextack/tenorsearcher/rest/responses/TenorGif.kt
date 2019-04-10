@@ -2,6 +2,7 @@ package com.nextack.tenorsearcher.rest.responses
 
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
+import com.nextack.tenorsearcher.constants.RestConstants
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -42,6 +43,46 @@ open class TenorGif {
     // A short URL to view the post on tenor.com.
     @SerializedName("url")
     var url: String = ""
+
+    fun getGifPreviewUrl() : String? {
+        return media[0][RestConstants.FORMAT_GIF]?.get(RestConstants.MEDIA_PREVIEW)
+    }
+
+    fun getGifUrl() : String? {
+        return media[0][RestConstants.FORMAT_GIF]?.get(RestConstants.MEDIA_URL)
+    }
+
+    fun getSmallestGifUrl() : String? {
+        if(media[0].containsKey(RestConstants.FORMAT_NANO_GIF)) {
+            return media[0][RestConstants.FORMAT_NANO_GIF]?.get(RestConstants.MEDIA_URL)
+        } else if(media[0].containsKey(RestConstants.FORMAT_TINY_GIF)) {
+            return media[0][RestConstants.FORMAT_TINY_GIF]?.get(RestConstants.MEDIA_URL)
+        } else if(media[0].containsKey(RestConstants.FORMAT_MEDIUM_GIF)) {
+            return media[0][RestConstants.FORMAT_MEDIUM_GIF]?.get(RestConstants.MEDIA_URL)
+        } else {
+            return media[0][RestConstants.FORMAT_GIF]?.get(RestConstants.MEDIA_URL)
+        }
+    }
+
+    fun hasGif() : Boolean {
+        return (media[0].containsKey(RestConstants.FORMAT_GIF) ||
+            media[0].containsKey(RestConstants.FORMAT_MEDIUM_GIF) ||
+            media[0].containsKey(RestConstants.FORMAT_TINY_GIF) ||
+                media[0].containsKey(RestConstants.FORMAT_NANO_GIF))
+    }
+
+    fun hasMp4() : Boolean {
+        return (media[0].containsKey(RestConstants.FORMAT_MP4) ||
+            media[0].containsKey(RestConstants.FORMAT_LOOPED_MP4) ||
+            media[0].containsKey(RestConstants.FORMAT_TINY_MP4) ||
+            media[0].containsKey(RestConstants.FORMAT_NANO_MP4))
+    }
+
+    fun hasWebm() : Boolean {
+        return (media[0].containsKey(RestConstants.FORMAT_WEBM) ||
+            media[0].containsKey(RestConstants.FORMAT_TINY_WEBM) ||
+            media[0].containsKey(RestConstants.FORMAT_NANO_WEBM))
+    }
 
 
 }

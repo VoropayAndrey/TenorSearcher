@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.GridView
 import android.widget.ImageView
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
@@ -14,6 +15,7 @@ import com.nextack.tenorsearcher.R
 import com.nextack.tenorsearcher.application.TenorSearcherApplication
 import com.nextack.tenorsearcher.repository.Repository
 import com.nextack.tenorsearcher.view.OnFragmentInteractionListener
+import com.nextack.tenorsearcher.view.adapters.GifGridAdapter
 import kotlinx.android.synthetic.main.fragment_trending.*
 import javax.inject.Inject
 
@@ -37,18 +39,21 @@ class TrendingFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
+    private lateinit var gifGridAdapter: GifGridAdapter
 
     @Inject
     lateinit var repository: Repository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        (this.activity?.application as TenorSearcherApplication).getApplicationComponent().inject(this)
+
+
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-
-        (this.activity?.application as TenorSearcherApplication).getApplicationComponent().inject(this)
     }
 
     override fun onCreateView(
@@ -56,7 +61,10 @@ class TrendingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_trending, container, false)
+        var view = inflater.inflate(R.layout.fragment_trending, container, false)
+        gifGridAdapter = GifGridAdapter(context!!)
+        view.findViewById<GridView>(R.id.grid_view).adapter = gifGridAdapter
+        return view
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -82,8 +90,9 @@ class TrendingFragment : Fragment() {
         super.onResume()
         //repository.getAnonId()
         repository.trending().observe(this, Observer {
-            var url = it.body?.results?.get(0)?.media?.get(0)?.get("gif")?.get("url").toString()
-            Glide.with(context!!).load(url).into(gifExample)
+            gifGridAdapter.update(it.body?.toUrlList())
+            //var url = it.body?.results?.get(0)?.media?.get(0)?.get("gif")?.get("url").toString()
+            //Glide.with(context!!).load(url).into(gifExample)
 
         })
         //repository.search("cats")

@@ -26,7 +26,7 @@ class Repository(private val restService: TenorRestService,
         if(anonId == null) {
 
         } else {
-            restService.search(RestConstants.TENOR_API_KEY, anonId, query, "ua_UA", 10).enqueue(object : retrofit2.Callback<SearchResult> {
+            restService.search(RestConstants.TENOR_API_KEY, anonId, query, "ua_UA", RestConstants.GIF_LIMIT).enqueue(object : retrofit2.Callback<SearchResult> {
                 override fun onFailure(call: Call<SearchResult>, t: Throwable) {
                     liveData.value = RestResponse(t)
                 }
@@ -46,7 +46,7 @@ class Repository(private val restService: TenorRestService,
         if(anonId == null) {
 
         } else {
-            restService.trending(RestConstants.TENOR_API_KEY, anonId, "ua_UA", 10, "basic", "all", "off", "").enqueue(object : retrofit2.Callback<SearchResult> {
+            restService.trending(RestConstants.TENOR_API_KEY, anonId, "ua_UA", RestConstants.GIF_LIMIT, "basic", "all", "off", "").enqueue(object : retrofit2.Callback<SearchResult> {
                 override fun onFailure(call: Call<SearchResult>, t: Throwable) {
                     liveData.value = RestResponse(t)
                 }
