@@ -13,6 +13,8 @@
                 app:popEnterAnim="@anim/slide_in_left"
                 app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
-    <fragment android:id="@+id/gifFragment" android:name="com.nextack.tenorsearcher.view.fragments.gifFragment"
-              android:label="fragment_gif" tools:layout="@layout/fragment_gif"/>
+    <fragment android:id="@+id/gifFragment" android:name="com.nextack.tenorsearcher.view.fragments.GifFragment"
+              android:label="fragment_gif" tools:layout="@layout/fragment_gif">
+        <argument android:name="gitUrl" app:argType="string"/>
+    </fragment>
 </navigation>

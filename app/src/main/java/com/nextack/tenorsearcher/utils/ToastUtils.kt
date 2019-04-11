@@ -4,13 +4,14 @@ import android.content.Context
 import android.view.Gravity
 import android.widget.TextView
 import android.widget.Toast
+import com.nextack.tenorsearcher.di.AppScope
+import dagger.Reusable
 import javax.inject.Inject
 
 class ToastUtils {
 
-    private lateinit var context: Context
+    private var context: Context
 
-    @Inject
     constructor(context: Context) {
         this.context = context
     }

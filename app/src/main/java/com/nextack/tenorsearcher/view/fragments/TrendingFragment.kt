@@ -7,17 +7,25 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.GridView
-import android.widget.ImageView
+import android.view.inputmethod.EditorInfo
+import android.widget.AbsListView
+import android.widget.AdapterView
 import androidx.lifecycle.Observer
-import com.bumptech.glide.Glide
+import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.nextack.tenorsearcher.R
 import com.nextack.tenorsearcher.application.TenorSearcherApplication
-import com.nextack.tenorsearcher.repository.Repository
+import com.nextack.tenorsearcher.constants.CommonConstants
+import com.nextack.tenorsearcher.constants.RestConstants
+import com.nextack.tenorsearcher.rest.responses.RestResponse
+import com.nextack.tenorsearcher.rest.responses.SearchResult
 import com.nextack.tenorsearcher.view.OnFragmentInteractionListener
+import com.nextack.tenorsearcher.view.activities.MainActivity
 import com.nextack.tenorsearcher.view.adapters.GifGridAdapter
+import com.nextack.tenorsearcher.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.fragment_trending.*
-import javax.inject.Inject
+import timber.log.Timber
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -40,9 +48,9 @@ class TrendingFragment : Fragment() {
     private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
     private lateinit var gifGridAdapter: GifGridAdapter
+    private lateinit var mainViewModel: MainViewModel
 
-    @Inject
-    lateinit var repository: Repository
+    private var enableNextRequests: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,10 +69,58 @@ class TrendingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        var view = inflater.inflate(R.layout.fragment_trending, container, false)
+        return inflater.inflate(R.layout.fragment_trending, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         gifGridAdapter = GifGridAdapter(context!!)
-        view.findViewById<GridView>(R.id.grid_view).adapter = gifGridAdapter
-        return view
+        grid_view.adapter = gifGridAdapter
+
+        grid_view.onItemClickListener = (object : AdapterView.OnItemClickListener {
+            override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                var bundle = Bundle()
+                bundle.putString(CommonConstants.BUNDLE_GIF_URL, gifGridAdapter.urlList[position])
+                Navigation.findNavController(view!!).navigate(R.id.action_select_gif, bundle)
+            }
+        })
+
+        search_field.setOnEditorActionListener { v, actionId, event ->
+            if(actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT) {
+                grid_view.smoothScrollToPosition(0)
+                mainViewModel.search(search_field.text.toString())
+            }
+            true
+        }
+
+        grid_view.setOnScrollListener(object : AbsListView.OnScrollListener {
+            override fun onScroll(
+                view: AbsListView?,
+                firstVisibleItem: Int,
+                visibleItemCount: Int,
+                totalItemCount: Int
+            ) {
+                //Timber.d("firstVisibleItem: $firstVisibleItem")
+                //Timber.d("visibleItemCount: $visibleItemCount")
+                //Timber.d("totalItemCount: $totalItemCount")
+
+                mainViewModel.firstVisibleItem = firstVisibleItem
+
+                if(enableNextRequests &&
+                    firstVisibleItem > 0 &&
+                    totalItemCount > 0 &&
+                    firstVisibleItem + RestConstants.GIF_LIMIT / 2 > totalItemCount) {
+                    enableNextRequests = false
+                    mainViewModel.next()
+                }
+            }
+
+            override fun onScrollStateChanged(view: AbsListView?, scrollState: Int) {
+
+            }
+        })
+
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -74,6 +130,9 @@ class TrendingFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+
+        mainViewModel = ViewModelProviders.of(this, (activity as MainActivity).viewModeFactory).get(MainViewModel::class.java)
+
         if (context is OnFragmentInteractionListener) {
             listener = context
         } else {
@@ -88,14 +147,32 @@ class TrendingFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        //repository.getAnonId()
-        repository.trending().observe(this, Observer {
-            gifGridAdapter.update(it.body?.toUrlList())
-            //var url = it.body?.results?.get(0)?.media?.get(0)?.get("gif")?.get("url").toString()
-            //Glide.with(context!!).load(url).into(gifExample)
 
+        mainViewModel.restResult.observe(this, Observer {
+            enableNextRequests = true
+            handleResponse(it, !it.isNext)
         })
-        //repository.search("cats")
+
+        mainViewModel.getTrending()
+
+        mainViewModel.searchString.observe(this, Observer {
+            search_field.setText(it)
+        })
+    }
+
+    private fun handleResponse(restResponse: RestResponse<SearchResult>, isFullUpdate: Boolean) {
+        if(restResponse.isSuccessful()) {
+            if(isFullUpdate) {
+                enableNextRequests = true
+                mainViewModel.firstVisibleItem = 0
+                gifGridAdapter.update(restResponse.body?.toPreviewUrlList())
+            } else {
+                gifGridAdapter.add(restResponse.body?.toPreviewUrlList())
+            }
+
+        } else {
+            (activity as MainActivity).toastUtils.showToast(restResponse.errorMessage!!)
+        }
     }
 
     override fun onPause() {

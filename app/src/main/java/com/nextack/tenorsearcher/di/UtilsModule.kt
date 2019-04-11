@@ -9,6 +9,6 @@ import javax.inject.Singleton
 @Module
 class UtilsModule {
     @Provides
-    @Singleton
+    @AppScope
     fun provideToastUtils(context: Context) : ToastUtils = ToastUtils(context)
 }

@@ -18,10 +18,22 @@ interface TenorRestService {
                @Query("anon_id") anonId: String,
                @Query("q") quary: String,
                @Query("locale") locale: String,
-               @Query("limit") limit: Int) : Call<SearchResult>
+               @Query("limit") limit: Int,
+               @Query("media_filter") mediaFilter: String,
+               @Query("ar_range") range: String,
+               @Query("contentfilter") contentFilter: String) : Call<SearchResult>
 
     @GET("trending")
     fun trending(@Query("key") apiKey: String,
+                 @Query("anon_id") anonId: String,
+                 @Query("locale") locale: String,
+                 @Query("limit") limit: Int,
+                 @Query("media_filter") mediaFilter: String,
+                 @Query("ar_range") range: String,
+                 @Query("contentfilter") contentFilter: String) : Call<SearchResult>
+
+    @GET("trending")
+    fun next(@Query("key") apiKey: String,
                  @Query("anon_id") anonId: String,
                  @Query("locale") locale: String,
                  @Query("limit") limit: Int,

@@ -1,9 +1,12 @@
 package com.nextack.tenorsearcher.application
 
 import android.app.Application
+import com.nextack.tenorsearcher.BuildConfig
 import com.nextack.tenorsearcher.di.ApplicationComponent
 import com.nextack.tenorsearcher.di.ContextModule
 import com.nextack.tenorsearcher.di.DaggerApplicationComponent
+import com.nextack.tenorsearcher.logs.CrashReportingTree
+import timber.log.Timber
 
 open class TenorSearcherApplication : Application() {
 
@@ -12,6 +15,11 @@ open class TenorSearcherApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         component = initApplicationComponent()
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        } else {
+            Timber.plant(CrashReportingTree())
+        }
     }
 
     private fun initApplicationComponent() : ApplicationComponent {

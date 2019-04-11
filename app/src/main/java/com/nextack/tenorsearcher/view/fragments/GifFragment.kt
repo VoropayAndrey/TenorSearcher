@@ -1,14 +1,22 @@
 package com.nextack.tenorsearcher.view.fragments
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.nextack.tenorsearcher.R
+import com.nextack.tenorsearcher.constants.CommonConstants
 import com.nextack.tenorsearcher.view.OnFragmentInteractionListener
+import kotlinx.android.synthetic.main.fragment_gif.*
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -47,7 +55,39 @@ class GifFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_gif, container, false)
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        var gifUrl = getArguments()?.getString(CommonConstants.BUNDLE_GIF_URL)
+        gifUrl?.let {
+            Glide.with(this).load(gifUrl).listener(
+                object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        full_gif_spinner.visibility = View.GONE
+                        full_gif_image.visibility = View.GONE
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        full_gif_spinner.visibility = View.GONE
+                        full_gif_image.visibility = View.VISIBLE
+                        return false
+                    }
+                }
+            ).into(full_gif_image)
+        }
+    }
+
     fun onButtonPressed(uri: Uri) {
         listener?.onFragmentInteraction(uri)
     }
@@ -65,6 +105,8 @@ class GifFragment : Fragment() {
         super.onDetach()
         listener = null
     }
+
+
 
     companion object {
         /**

@@ -35,11 +35,6 @@ class GifGridAdapter(var context: Context) : BaseAdapter() {
         val imageView = view.findViewById<ImageView>(R.id.grid_item_image)
         val spinnerView = view.findViewById<ProgressBar>(R.id.grid_item_spinner)
 
-        val circularProgressDrawable = CircularProgressDrawable(context)
-        circularProgressDrawable.strokeWidth = 5f
-        circularProgressDrawable.centerRadius = 30f
-        circularProgressDrawable.start()
-
         Glide.with(context).load(urlList[position]).listener(
             object : RequestListener<Drawable> {
                 override fun onLoadFailed(
@@ -48,8 +43,8 @@ class GifGridAdapter(var context: Context) : BaseAdapter() {
                     target: Target<Drawable>?,
                     isFirstResource: Boolean
                 ): Boolean {
-                    spinnerView.visibility = View.GONE
-                    imageView.visibility = View.GONE
+                    spinnerView.visibility = View.INVISIBLE
+                    imageView.visibility = View.INVISIBLE
                     return false
                 }
 
@@ -60,12 +55,12 @@ class GifGridAdapter(var context: Context) : BaseAdapter() {
                     dataSource: DataSource?,
                     isFirstResource: Boolean
                 ): Boolean {
-                    spinnerView.visibility = View.GONE
+                    spinnerView.visibility = View.INVISIBLE
                     imageView.visibility = View.VISIBLE
                     return false
                 }
             }
-        ).placeholder(circularProgressDrawable).into(imageView)
+        ).into(imageView)
 
         return view
     }
@@ -88,5 +83,12 @@ class GifGridAdapter(var context: Context) : BaseAdapter() {
             this.urlList.addAll(urlList)
         }
         this.notifyDataSetChanged()
+    }
+
+    fun add(urlList: List<String>?) {
+        urlList?.let {
+            this.urlList.addAll(urlList)
+            this.notifyDataSetChanged()
+        }
     }
 }

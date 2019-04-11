@@ -92,8 +92,8 @@ object RestConstants {
     Dimensions: Same as tinymp4
     Usage Notes: Use this size for GIF shares on mobile
 
-   Filter: default
-   */
+    Filter: default
+    */
     val FORMAT_TINY_WEBM = "tinywebm"
 
     /*
@@ -109,21 +109,46 @@ object RestConstants {
     /*
     A url to a preview image of the media source
      */
-    var MEDIA_PREVIEW = "preview"
+    val MEDIA_PREVIEW = "preview"
 
 
     /*
     A a url to the media source
     */
-    var MEDIA_URL = "url"
+    val MEDIA_URL = "url"
 
     /*
     Width and height in pixels
     */
-    var MEDIA_DIMS = "dims"
-
+    val MEDIA_DIMS = "dims"
     /*
     Size of file in bytes
     */
-    var MEDIA_SIZE = "size"
+    val MEDIA_SIZE = "size"
+
+    val DEFAULT_LOCALE = "ua_UA"
+
+
+    // off - G, PG, PG-13, and R (no nudity)
+    val CONTENT_FILTER_OFF = "off"
+    // low - G, PG, and PG-13
+    val CONTENT_FILTER_LOW = "low"
+    // medium - G and PG
+    val CONTENT_FILTER_MEDIUM = "medium"
+    // high - G
+    val CONTENT_FILTER_HIGH = "high"
+
+    // Reduce the Number of GIF formats returned
+    // minimal - tinygif, gif, and mp4.
+    val MEDIA_FILTER_MINIMAL = "minimal"
+    // basic - nanomp4, tinygif, tinymp4, gif, mp4, and nanogif
+    val MEDIA_FILTER_BASIC = "basic"
+
+    // Filter the response GIF_OBJECT list to only include GIFs with aspect ratios that fit with in the selected range.
+    // all - no constraints
+    val AR_RANGE_ALL = "all"
+    // wide - 0.42 <= aspect ratio <= 2.36
+    val AR_RANGE_WIDE = "wide"
+    // standard - .56 <= aspect ratio <= 1.78
+    val AR_RANGE_STANDARD = "standard"
 }
